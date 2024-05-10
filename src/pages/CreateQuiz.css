@@ -1,0 +1,33 @@
+.create-quiz-container {
+    max-width: 600px;
+    margin: 0 auto;
+    color: whitesmoke;
+}
+
+.create-quiz-container h1 {
+    text-align: center;
+}
+
+.create-quiz-container form {
+    margin-top: 20px;
+}
+
+.create-quiz-container label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.create-quiz-container input[type="text"],
+.create-quiz-container textarea,
+.create-quiz-container select {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.create-quiz-container select {
+    cursor: pointer;
+}

@@ -1,0 +1,32 @@
+.help-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    color: whitesmoke;
+}
+
+.help-heading {
+    font-size: 2rem;
+    margin-bottom: 20px;
+    color: whitesmoke;
+}
+
+.help-navigation {
+    padding: 0;
+    margin: 0;
+    color: whitesmoke;
+}
+
+.help-navigation li {
+    margin-bottom: 10px;
+}
+
+.help-navigation a {
+    color: whitesmoke;
+    font-size: 1.2rem;
+    transition: color 0.3s ease;
+}
+
+.help-navigation a:hover {
+    color: #ffc107;
+}

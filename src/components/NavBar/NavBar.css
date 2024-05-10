@@ -1,0 +1,27 @@
+.NavBar {
+    background-color: #333;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+.NavBar ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+.NavBar li {
+    display: inline;
+    font-size: 20px;
+    margin-right: 20px;
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.NavBar li:hover {
+    color: #ffc107; /* Change color on hover */
+}
