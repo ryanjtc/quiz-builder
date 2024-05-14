@@ -2,21 +2,21 @@ import React, { useEffect, useState } from 'react';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../firebase';
 import QuizFetcher from "../components/QuizFetcher";
-import './PlayQuiz.css'; // Import the CSS file
+import './PlayQuiz.css';
 
 const PlayQuiz = () => {
     const [loading, setLoading] = useState(true);
     const [quizzes, setQuizzes] = useState([]);
     const [selectedQuiz, setSelectedQuiz] = useState(null);
-    const [quizData, setQuizData] = useState([]);
-    const [selectedOption, setSelectedOption] = useState(null);
+    const [quizData, setQuizData] = useState(null);
+    const [selectedOptions, setSelectedOptions] = useState({});
 
     const loadQuizData = async (quizId) => {
         try {
             const querySnapshot = await getDocs(collection(db, 'create'));
             const quizData = querySnapshot.docs
                 .filter(doc => doc.id === quizId)
-                .map(doc => ({ id: doc.id, ...doc.data() }));
+                .map(doc => ({ id: doc.id, ...doc.data() }))[0];
             setQuizData(quizData);
             console.log("Load data for quiz with ID:", quizId);
         } catch (error) {
@@ -26,13 +26,19 @@ const PlayQuiz = () => {
 
     useEffect(() => {
         if (selectedQuiz) {
-            setSelectedOption(null);
+            setSelectedOptions({});
             loadQuizData(selectedQuiz);
         }
     }, [selectedQuiz]);
 
-    const handleOptionClick = (option) => {
-        setSelectedOption(option);
+    const handleOptionClick = (qIndex, option, correctAnswer) => {
+        setSelectedOptions(prev => ({
+            ...prev,
+            [qIndex]: {
+                selected: option,
+                isCorrect: option === correctAnswer
+            }
+        }));
     };
 
     return (
@@ -58,29 +64,35 @@ const PlayQuiz = () => {
                 )}
             </div>
             <div className="quiz-data-container">
-                {quizData.length > 0 && (
+                {quizData && (
                     <div>
-                        <div key={quizData[0].id} className="quiz-item">
-                            <div>
-                                <h2>{quizData[0].title}</h2>
-                                <hr/>
-                                <p>Question:</p>
-                                <h2>{quizData[0].question}</h2>
+                        <h2>{quizData.title}</h2>
+                        {quizData.questions.map((question, qIndex) => (
+                            <div key={qIndex} className="quiz-item">
+                                <hr />
+                                <p>Question {qIndex + 1}:</p>
+                                <h2>{question.question}</h2>
                                 <p>Select the right answer:</p>
                                 <div className="quiz-options-grid">
-                                    {quizData[0].options.map((option, index) => (
-                                        <h3 key={index} className={`quiz-option ${selectedOption === option && option === quizData[0].answer ? 'correct' : ''}`} onClick={() => handleOptionClick(option)}>
+                                    {question.options.map((option, index) => (
+                                        <h3
+                                            key={index}
+                                            className={`quiz-option ${selectedOptions[qIndex]?.selected === option ? (selectedOptions[qIndex]?.isCorrect ? 'correct' : 'wrong') : ''}`}
+                                            onClick={() => handleOptionClick(qIndex, option, question.answer)}
+                                        >
                                             {option}
                                         </h3>
                                     ))}
                                 </div>
-                                {selectedOption && selectedOption === quizData[0].answer ? (
-                                    <h2 className="quiz-answer"> Correct! <b style={{color: "green"}}>{quizData[0].answer}</b>  is the right answer.</h2>
-                                ) : selectedOption ? (
-                                    <h2 className="wrong-answer">Wrong! Try Again</h2>
-                                ) : null}
+                                {selectedOptions[qIndex]?.selected && (
+                                    selectedOptions[qIndex]?.isCorrect ? (
+                                        <h2 className="quiz-answer">Correct! <b style={{ color: "green" }}>{question.answer}</b> is the right answer.</h2>
+                                    ) : (
+                                        <h2 className="wrong-answer">Wrong! Try Again</h2>
+                                    )
+                                )}
                             </div>
-                        </div>
+                        ))}
                     </div>
                 )}
             </div>

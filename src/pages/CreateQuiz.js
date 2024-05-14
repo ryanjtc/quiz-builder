@@ -6,27 +6,30 @@ import QuizFetcher from "../components/QuizFetcher";
 
 const CreateQuiz = () => {
     const [title, setTitle] = useState('');
-    const [question, setQuestion] = useState('');
-    const [options, setOptions] = useState(['', '', '', '']);
-    const [answer, setAnswer] = useState('');
+    const [questions, setQuestions] = useState([{
+        question: '',
+        options: ['', '', '', ''],
+        answer: ''
+    }]);
     const [quizzes, setQuizzes] = useState([]);
     const [loading, setLoading] = useState(true);
 
     const handleFormSubmission = async (event) => {
         event.preventDefault();
         try {
-            //check if the answer is empty, if so, set it to the value of the first option.
-            const answerToSubmit = answer || options[0];
+            const formattedQuestions = questions.map(q => ({
+                question: q.question,
+                options: q.options,
+                answer: q.answer || q.options[0]
+            }));
 
             await addDoc(collection(db, 'create'), {
                 title: title,
-                question: question,
-                options: options,
-                answer: answerToSubmit
+                questions: formattedQuestions
             });
             await fetchQuizzes();
         } catch (error) {
-            console.error('Error saving task:', error);
+            console.error('Error saving quiz:', error);
         }
     };
 
@@ -44,10 +47,30 @@ const CreateQuiz = () => {
         }
     };
 
-    const handleOptionChange = (index, value) => {
-        const newOptions = [...options];
-        newOptions[index] = value;
-        setOptions(newOptions);
+    const handleQuestionChange = (index, value) => {
+        const newQuestions = [...questions];
+        newQuestions[index].question = value;
+        setQuestions(newQuestions);
+    };
+
+    const handleOptionChange = (qIndex, oIndex, value) => {
+        const newQuestions = [...questions];
+        newQuestions[qIndex].options[oIndex] = value;
+        setQuestions(newQuestions);
+    };
+
+    const handleAnswerChange = (qIndex, value) => {
+        const newQuestions = [...questions];
+        newQuestions[qIndex].answer = value;
+        setQuestions(newQuestions);
+    };
+
+    const addQuestionSet = () => {
+        setQuestions([...questions, {
+            question: '',
+            options: ['', '', '', ''],
+            answer: ''
+        }]);
     };
 
     return (
@@ -60,32 +83,37 @@ const CreateQuiz = () => {
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
                 />
-                <label>Question:</label>
-                <textarea
-                    value={question}
-                    onChange={(e) => setQuestion(e.target.value)}
-                />
-                <label>Options:</label>
-                {[1, 2, 3, 4].map((index) => (
-                    <input
-                        key={index}
-                        type="text"
-                        value={options[index - 1]}
-                        onChange={(e) => handleOptionChange(index - 1, e.target.value)}
-                    />
+                {questions.map((q, qIndex) => (
+                    <div key={qIndex}>
+                        <label>Question {qIndex + 1}:</label>
+                        <textarea
+                            value={q.question}
+                            onChange={(e) => handleQuestionChange(qIndex, e.target.value)}
+                        />
+                        <label>Options:</label>
+                        {q.options.map((option, oIndex) => (
+                            <input
+                                key={oIndex}
+                                type="text"
+                                value={option}
+                                onChange={(e) => handleOptionChange(qIndex, oIndex, e.target.value)}
+                            />
+                        ))}
+                        <label>Answer:</label>
+                        <select
+                            value={q.answer}
+                            onChange={(e) => handleAnswerChange(qIndex, e.target.value)}
+                        >
+                            {q.options.map((option, oIndex) => (
+                                <option key={oIndex} value={option}>
+                                    Option {oIndex + 1}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
                 ))}
-                <label>Answer:</label>
-                <select
-                    value={answer}
-                    onChange={(e) => setAnswer(e.target.value)}
-                >
-                    {[1, 2, 3, 4].map((index) => (
-                        <option key={index} value={options[index - 1]}>
-                            Option {index}
-                        </option>
-                    ))}
-                </select>
-                <button type={'submit'}>Submit</button>
+                <button type="button" onClick={addQuestionSet}>Add Question</button>
+                <button type="submit">Submit</button>
             </form>
             <QuizFetcher setQuizzes={setQuizzes} setLoading={setLoading} />
             <div>
