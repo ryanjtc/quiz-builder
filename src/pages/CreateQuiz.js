@@ -83,6 +83,9 @@ const CreateQuiz = () => {
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
                 />
+                <br/>
+                <br/>
+                <br/>
                 {questions.map((q, qIndex) => (
                     <div key={qIndex}>
                         <label>Question {qIndex + 1}:</label>
@@ -110,6 +113,9 @@ const CreateQuiz = () => {
                                 </option>
                             ))}
                         </select>
+                        <hr/>
+                        <br/>
+                        <br/>
                     </div>
                 ))}
                 <button type="button" onClick={addQuestionSet}>Add Question</button>
