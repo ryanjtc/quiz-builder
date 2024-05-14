@@ -17,6 +17,21 @@
     margin-bottom: 5px;
 }
 
+.options-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 10px;
+}
+
+.options-grid input {
+    background-color: rgb(0, 0, 0);
+    color: white;
+}
+
+.options-grid ::placeholder {
+    color: white;
+}
+
 .create-quiz-container input[type="text"],
 .create-quiz-container textarea,
 .create-quiz-container select {

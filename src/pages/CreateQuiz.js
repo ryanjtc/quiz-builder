@@ -94,14 +94,17 @@ const CreateQuiz = () => {
                             onChange={(e) => handleQuestionChange(qIndex, e.target.value)}
                         />
                         <label>Options:</label>
+                        <div className='options-grid'>
                         {q.options.map((option, oIndex) => (
                             <input
                                 key={oIndex}
                                 type="text"
                                 value={option}
+                                placeholder={oIndex +1}
                                 onChange={(e) => handleOptionChange(qIndex, oIndex, e.target.value)}
                             />
                         ))}
+                        </div>
                         <label>Answer:</label>
                         <select
                             value={q.answer}
@@ -119,6 +122,8 @@ const CreateQuiz = () => {
                     </div>
                 ))}
                 <button type="button" onClick={addQuestionSet}>Add Question</button>
+                <br/>
+                <br/>
                 <button type="submit">Submit</button>
             </form>
             <QuizFetcher setQuizzes={setQuizzes} setLoading={setLoading} />
